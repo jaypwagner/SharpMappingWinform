@@ -11,56 +11,45 @@ using System.Windows.Forms;
 using BruTile;
 using ProjNet;
 using ProjNet.CoordinateSystems;
+using System.IO;
+
 namespace SharpMappingWinform
 {
+
     public partial class Form1 : Form
     {
+        public Dictionary<int, IStyle> styles = new Dictionary<int, IStyle>();
         public Form1()
         {
             InitializeComponent();
 
-            string tutFile = @"D:\states_ugl.shp";
-            string worldBorders = @"D:\BordersProject\TM_WORLD_BORDERS-0.3.shp";
+            string currentDir = Directory.GetCurrentDirectory();
+            string tutFile = @"\ShapeFiles\states_ugl.shp";
+            string worldBorders = @"\ShapeFiles\TM_WORLD_BORDERS-0.3.shp";
             List<string> texasShapeFiles = new List<string>();
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\buildings.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\landuse.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\natural.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\places.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\points.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\railways.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\roads.shp");
-            texasShapeFiles.Add(@"D:\BordersProject\Texas\waterways.shp");
 
-            SharpMap.Layers.VectorLayer vlay = new SharpMap.Layers.VectorLayer("States");
-            SharpMap.Layers.VectorLayer vlay2 = new SharpMap.Layers.VectorLayer("world");
-            SharpMap.Layers.VectorLayer vlayTx = new SharpMap.Layers.VectorLayer("texas");
 
-            vlay.DataSource = new SharpMap.Data.Providers.ShapeFile(tutFile, true);
-            vlay.DataSource = new SharpMap.Data.Providers.ShapeFile(worldBorders, true);
-           
-            vlayTx.DataSource = new SharpMap.Data.Providers.ShapeFile(@"D:\BordersProject\Texas\natural.shp");
-            foreach (var s in texasShapeFiles)
-            {
-                //vlayTx.DataSource = new SharpMap.Data.Providers.ShapeFile(s, true);
-            }
-            //SharpMap.Layers.VectorLayer vlay = new SharpMap.Layers.VectorLayer("States");
-            //vlay.DataSource = new SharpMap.Data.Providers.ShapeFile(worldBorders, true);
+            SharpMap.Layers.VectorLayer vlay = new SharpMap.Layers.VectorLayer("world");
 
-            //Create the style for Land
+            // Load information from ShapeFiles
+            vlay.DataSource = new SharpMap.Data.Providers.ShapeFile(currentDir + worldBorders, true);
+
+            //Create the style
             VectorStyle defaultStyle = new VectorStyle();
 
-            //Create the style for Water
+            //Create the style for regions
             VectorStyle africa = new VectorStyle();
             VectorStyle antartica = new VectorStyle();
             VectorStyle australia = new VectorStyle();
             VectorStyle northAmerica = new VectorStyle();
             VectorStyle asia = new VectorStyle();
             VectorStyle europe = new VectorStyle();
+
             // Set Random Colors
             Random rnd = new Random();
 
-            ////Create the map
-            Dictionary<int, IStyle> styles = new Dictionary<int, IStyle>();
+
+            // Add styles to List
             styles.Add(999, defaultStyle);
             styles.Add(0, antartica);
             styles.Add(2, africa);
@@ -79,18 +68,19 @@ namespace SharpMappingWinform
                 var g = rnd.Next(0, 256);
                 var b = rnd.Next(0, 256);
                 o.Fill = new SolidBrush(Color.FromArgb(r, g, b));
-                //.EnableOutline = true;
             }
 
             //Assign the theme
             vlay.Theme = new SharpMap.Rendering.Thematics.UniqueValuesTheme<int>("region", styles, defaultStyle);
-            //GeoAPI.Geometries.Envelope i = vlayTx.DataSource.GetGeometriesInView(mapBox1.Bounds);
-            //vlayTx.Enabled = true;
+
+            // Add the layer to the mapBox control
             mapBox1.Map.Layers.Add(vlay);
 
+            // Get US Cities from WMS Server
             SharpMap.Layers.WmsLayer wmsL =
                new SharpMap.Layers.WmsLayer("US Cities",
                    "http://sampleserver1.arcgisonline.com/ArcGIS/services/Specialty/ESRI_StatesCitiesRivers_USA/MapServer/WMSServer");
+
             //Force PNG format. Else we can't see through
             wmsL.SetImageFormat("image/png");
             //Force version 1.1.0
@@ -107,7 +97,30 @@ namespace SharpMappingWinform
             mapBox1.ActiveTool = SharpMap.Forms.MapBox.Tools.Pan;
         }
 
+        private void randomColorStyles()
+        {
+            Random rnd = new Random();
+            foreach (KeyValuePair<int, IStyle> style in styles)
+            {
+                var o = style.Value as VectorStyle;
+                o.EnableOutline = true;
+                rnd.Next(0, 256);
+
+                var r = rnd.Next(0, 256);
+                var g = rnd.Next(0, 256);
+                var b = rnd.Next(0, 256);
+                o.Fill = new SolidBrush(Color.FromArgb(r, g, b));
+            }
+            mapBox1.Refresh();
+        }
+
+        private void RandomColorButton_Click(object sender, EventArgs e)
+        {
+            randomColorStyles();
+        }
+
 
 
     }
+    
 }

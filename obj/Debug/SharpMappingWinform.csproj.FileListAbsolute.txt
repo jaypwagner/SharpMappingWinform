@@ -26,3 +26,4 @@ C:\Users\Jason\Documents\Visual Studio 2013\Projects\SharpMappingWinform\SharpMa
 C:\Users\Jason\Documents\Visual Studio 2013\Projects\SharpMappingWinform\SharpMappingWinform\obj\Debug\SharpMappingWinform.csproj.GenerateResource.Cache
 C:\Users\Jason\Documents\Visual Studio 2013\Projects\SharpMappingWinform\SharpMappingWinform\obj\Debug\SharpMappingWinform.exe
 C:\Users\Jason\Documents\Visual Studio 2013\Projects\SharpMappingWinform\SharpMappingWinform\obj\Debug\SharpMappingWinform.pdb
+C:\Users\Jason\Documents\Visual Studio 2013\Projects\SharpMappingWinform\SharpMappingWinform\obj\Debug\SharpMappingWinform.csprojResolveAssemblyReference.cache
